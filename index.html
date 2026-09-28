@@ -309,10 +309,10 @@
                 Laat ons uiterlijk voor <strong>1 maart 2028</strong> weten of je erbij bent!
             </p>
 
-            <!-- Verborgen iframe om de Google Form submission in op te vangen -->
-            <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) { showRSVPSuccess(); }"></iframe>
+            <!-- Onzichtbare Iframe voor verwerking op de achtergrond -->
+            <iframe name="secret_iframe" id="secret_iframe" style="display:none;" onload="if(isSubmitted){ showSuccess(); }"></iframe>
 
-            <form action="https://docs.google.com/forms/d/e/1FAIpQLSfwe3UPSukbCHpt1nuNlmYFn3K_H_X2metu7idittqrQ2efVA/formResponse" method="POST" target="hidden_iframe" id="rsvp-form" onsubmit="submitted=true;">
+            <form action="https://docs.google.com/forms/d/e/1FAIpQLSfwe3UPSukbCHpt1nuNlmYFn3K_H_X2metu7idittqrQ2efVA/formResponse" method="POST" target="secret_iframe" id="rsvp-form" onsubmit="isSubmitted = true;">
                 <div class="input-group">
                     <input type="text" name="entry.52919080" placeholder="Jouw naam / Namen van bezoekers" required>
                 </div>
@@ -320,13 +320,13 @@
                 <div class="input-group">
                     <select name="entry.1573650675" required>
                         <option value="" disabled selected>Ben je aanwezig?</option>
-                        <option value="Aanwezig">Ja, ik/wij zijn er heel graag bij!</option>
-                        <option value="Afwezig">Helaas kan/kunnen wij niet komen.</option>
+                        <option value="Aanwezig">Aanwezig</option>
+                        <option value="Afwezig">Afwezig</option>
                     </select>
                 </div>
 
                 <div class="input-group">
-                    <input type="number" name="entry.1967207897" placeholder="Aantal personen" min="1" max="5" value="1" required>
+                    <input type="text" name="entry.1967207897" placeholder="Aantal personen" value="1" required>
                 </div>
 
                 <div class="input-group">
@@ -348,14 +348,13 @@
     </footer>
 
     <script>
-        var submitted = false;
+        var isSubmitted = false;
 
-        function showRSVPSuccess() {
+        function showSuccess() {
             document.getElementById("rsvp-form").style.display = "none";
             document.getElementById("rsvp-success").style.display = "block";
         }
 
-        // De 3 verschillende dagplanningen
         const TIMETABLES = {
             cirkel2028: [
                 { time: "10:00", title: "Gemeentehuis 'De Oude Post'", desc: "Het officiële burgerlijk huwelijk" },
