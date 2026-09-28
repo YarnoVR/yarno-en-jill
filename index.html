@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yarno & Jill - 22.04.2028</title>
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -46,6 +47,7 @@
             line-height: 1;
         }
 
+        /* Access Modal Overlay */
         #login-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -113,6 +115,7 @@
             display: none;
         }
 
+        /* Header */
         header {
             text-align: center;
             padding: 60px 20px 40px;
@@ -129,12 +132,13 @@
             margin-top: 8px;
         }
 
+        /* Main Container */
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 0 20px 60px;
             flex: 1;
-            display: none;
+            display: none; /* Verborgen tot succesvolle login */
         }
 
         .card {
@@ -153,6 +157,7 @@
             border-bottom: 1px solid var(--bg-color);
         }
 
+        /* Countdown */
         .countdown-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -180,6 +185,7 @@
             color: var(--text-muted);
         }
 
+        /* Timeline */
         .timeline {
             position: relative;
             padding-left: 20px;
@@ -208,6 +214,7 @@
         .event-title { font-weight: 500; font-size: 1.05rem; }
         .event-desc { font-size: 0.88rem; color: var(--text-muted); }
 
+        /* Practical Details */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -234,7 +241,7 @@
 </head>
 <body>
 
-    <!-- Login Screen -->
+    <!-- Login Scherm -->
     <div id="login-overlay">
         <div class="login-box">
             <span class="script-font">Welkom</span>
@@ -242,14 +249,14 @@
             <p>Voer de persoonlijke code in van de achterzijde van je uitnodiging.</p>
             
             <div class="input-group">
-                <input type="password" id="passcode" placeholder="Toegangscode..." autocomplete="off">
+                <input type="text" id="passcode" placeholder="Toegangscode..." autocomplete="off">
             </div>
-            <button type="button" id="login-btn" class="btn-primary">Bekijk Uitnodiging</button>
+            <button type="button" onclick="login()" class="btn-primary">Bekijk Uitnodiging</button>
             <div id="error-msg" class="error-msg">Ongeldige toegangscode. Controleer je kaart.</div>
         </div>
     </div>
 
-    <!-- Main Site -->
+    <!-- Hoofdsite -->
     <header>
         <div class="script-font">Wij gaan trouwen!</div>
         <h1>Yarno & Jill</h1>
@@ -258,6 +265,7 @@
 
     <div class="container" id="main-content">
         
+        <!-- Countdown -->
         <div class="card">
             <div class="card-title">Aftellen naar de grote dag</div>
             <div class="countdown-grid">
@@ -268,11 +276,13 @@
             </div>
         </div>
 
+        <!-- Dagplanning -->
         <div class="card">
             <div class="card-title">Dagplanning</div>
             <div class="timeline" id="timeline-container"></div>
         </div>
 
+        <!-- Praktische Info -->
         <div class="card">
             <div class="card-title">Praktische Informatie</div>
             <div class="info-grid">
@@ -292,6 +302,7 @@
             </div>
         </div>
 
+        <!-- RSVP Formulier -->
         <div class="card">
             <div class="card-title">RSVP - Aanwezigheid</div>
             <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">
@@ -333,65 +344,46 @@
     </footer>
 
     <script>
-        // Universele hash-functie die 100% gegarandeerd overal werkt (ook op HTTP en oude mobieltjes)
-        function simpleHash(str) {
-            let hash = 0;
-            const cleanStr = str.trim().toLowerCase();
-            for (let i = 0; i < cleanStr.length; i++) {
-                const char = cleanStr.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash |= 0;
-            }
-            return hash.toString();
-        }
-
-        // Berekende hashes voor "cirkel2028", "zakdoekmee2028" en "smijten2028"
-        const ACCESS_MAP = {
-            "-1892120025": "day",      // Cirkel2028
-            "1786567554": "ceremony",  // ZakdoekMee2028
-            "-145719574": "party"      // Smijten2028
-        };
-
+        // De 3 verschillende dagplanningen
         const TIMETABLES = {
-            day: [
+            cirkel2028: [
                 { time: "13:30", title: "Ontvangst Dichtste Kring", desc: "Verzamelen bij De Melkerij" },
                 { time: "14:00", title: "Welkomstwoord & Lunch", desc: "Aanvang van de feestelijke middag" },
                 { time: "16:00", title: "De Ceremonie", desc: "Het officiële moment waarop we elkaar het ja-woord geven" },
                 { time: "17:30", title: "Receptie & Diner", desc: "Toosten, hapjes en een heerlijk dessert" },
                 { time: "20:30", title: "Openingsdans & Avondfeest", desc: "Feest tot in de late uurtjes!" }
             ],
-            ceremony: [
+            zakdoekmee2028: [
                 { time: "15:30", title: "Ontvangst Gasten", desc: "Verzamelen voor de ceremonie bij De Melkerij" },
                 { time: "16:00", title: "De Ceremonie", desc: "Het officiële moment waarop we elkaar het ja-woord geven" },
                 { time: "17:30", title: "Receptie & Diner", desc: "Toosten, hapjes en een heerlijk dessert" },
                 { time: "20:30", title: "Openingsdans & Avondfeest", desc: "Feest tot in de late uurtjes!" }
             ],
-            party: [
+            smijten2028: [
                 { time: "20:15", title: "Ontvangst Feestgasten", desc: "Aankomst bij De Melkerij" },
                 { time: "20:30", title: "Openingsdans & Start Avondfeest", desc: "Samen proosten op ons huwelijk en dansen tot in de late uurtjes!" }
             ]
         };
 
-        function doLogin(pass) {
-            const val = pass || document.getElementById("passcode").value;
-            const hash = simpleHash(val);
+        function login(customCode) {
+            const inputVal = customCode || document.getElementById("passcode").value;
+            const code = inputVal.trim().toLowerCase();
             const errorMsg = document.getElementById("error-msg");
 
-            if (ACCESS_MAP[hash]) {
-                const tier = ACCESS_MAP[hash];
+            if (TIMETABLES[code]) {
                 document.getElementById("login-overlay").style.display = "none";
                 document.getElementById("main-content").style.display = "block";
-                loadTimeline(tier);
+                loadTimeline(code);
                 startCountdown();
             } else {
                 errorMsg.style.display = "block";
             }
         }
 
-        function loadTimeline(tier) {
+        function loadTimeline(code) {
             const container = document.getElementById("timeline-container");
             container.innerHTML = "";
-            TIMETABLES[tier].forEach(item => {
+            TIMETABLES[code].forEach(item => {
                 container.innerHTML += `
                     <div class="timeline-item">
                         <div class="time">${item.time} uur</div>
@@ -416,17 +408,20 @@
             }, 1000);
         }
 
-        // Event listeners (Koppel knoppen & Enter-toets)
-        document.getElementById("login-btn").addEventListener("click", () => doLogin());
-        document.getElementById("passcode").addEventListener("keypress", (e) => {
-            if (e.key === "Enter") doLogin();
+        // Enter toets opvangen op het tekstveld
+        document.getElementById("passcode").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                login();
+            }
         });
 
-        // Automatisch inloggen via URL parameter (bijv. yarnoenjill.be?code=Cirkel2028)
+        // Automatische login via URL-parameter (bijv. yarnoenjill.be/?code=Cirkel2028)
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const codeParam = urlParams.get('code');
-            if (codeParam) doLogin(codeParam);
+            if (codeParam) {
+                login(codeParam);
+            }
         });
     </script>
 </body>
