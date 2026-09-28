@@ -8,8 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <!-- CryptoJS voor AES-256 Encryptie -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     
     <style>
         :root {
@@ -311,16 +309,13 @@
                 Laat ons uiterlijk voor <strong>1 maart 2028</strong> weten of je erbij bent!
             </p>
 
-            <form action="https://api.web3forms.com/submit" method="POST" id="rsvp-form">
-                <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
-                <input type="hidden" name="subject" value="Nieuwe RSVP Bruiloft Yarno & Jill">
-
+            <form id="rsvp-form" onsubmit="event.preventDefault(); submitRSVP();">
                 <div class="input-group">
-                    <input type="text" name="naam" placeholder="Jouw naam / Namen van bezoekers" required>
+                    <input type="text" id="rsvp-naam" placeholder="Jouw naam / Namen van bezoekers" required>
                 </div>
 
                 <div class="input-group">
-                    <select name="aanwezigheid" required>
+                    <select id="rsvp-aanwezigheid" required>
                         <option value="" disabled selected>Ben je aanwezig?</option>
                         <option value="Aanwezig">Ja, ik/wij zijn er heel graag bij!</option>
                         <option value="Afwezig">Helaas kan/kunnen wij niet komen.</option>
@@ -328,14 +323,17 @@
                 </div>
 
                 <div class="input-group">
-                    <input type="number" name="aantal_personen" placeholder="Aantal personen" min="1" max="5" value="1" required>
+                    <input type="number" id="rsvp-aantal" placeholder="Aantal personen" min="1" max="5" value="1" required>
                 </div>
 
                 <div class="input-group">
-                    <textarea name="dieetwensen" rows="3" placeholder="Dieetwensen of allergieën (optioneel)"></textarea>
+                    <textarea id="rsvp-dieet" rows="3" placeholder="Dieetwensen of allergieën (optioneel)"></textarea>
                 </div>
 
-                <button type="submit" class="btn-primary">RSVP Bevestigen</button>
+                <button type="submit" id="rsvp-btn" class="btn-primary">RSVP Bevestigen</button>
+                <div id="rsvp-success" style="display:none; color: var(--primary-green); font-weight: 600; margin-top: 15px; text-align: center;">
+                    ✓ Bedankt! Je reactie is goed ontvangen.
+                </div>
             </form>
         </div>
 
@@ -346,15 +344,8 @@
     </footer>
 
     <script>
-        // AES-256 Geüscripte data per wachtwoord (Volledig onleesbaar in de broncode)
-        const ENCRYPTED_DATA = {
-            "cirkel2028": "U2FsdGVkX19s5U3zYf7w8+K+Z3N3j9v+Xn3lY7q5K3aP5U+d9v+Xn3lY7q5K3aP5", // Payload
-            "zakdoekmee2028": "U2FsdGVkX19s5U3zYf7w8+K+Z3N3j9v+Xn3lY7q5K3aP5U+d9v+Xn3lY7q5K3aP5",
-            "smijten2028": "U2FsdGVkX19s5U3zYf7w8+K+Z3N3j9v+Xn3lY7q5K3aP5U+d9v+Xn3lY7q5K3aP5"
-        };
-
-        // Onversleutelde ruwe datastructuur die live wordt opgebouwd bij succesvol wachtwoord
-        const RAW_SCHEDULES = {
+        // De 3 verschillende dagplanningen
+        const TIMETABLES = {
             cirkel2028: [
                 { time: "10:00", title: "Gemeentehuis 'De Oude Post'", desc: "Het officiële burgerlijk huwelijk" },
                 { time: "11:30", title: "Aperitief Loft 8", desc: "Feestelijk klinken op het bruidspaar" },
@@ -381,20 +372,20 @@
             const code = inputVal.trim().toLowerCase();
             const errorMsg = document.getElementById("error-msg");
 
-            if (RAW_SCHEDULES[code]) {
+            if (TIMETABLES[code]) {
                 document.getElementById("login-overlay").style.display = "none";
                 document.getElementById("main-content").style.display = "block";
-                loadTimeline(RAW_SCHEDULES[code]);
+                loadTimeline(code);
                 startCountdown();
             } else {
                 errorMsg.style.display = "block";
             }
         }
 
-        function loadTimeline(schedule) {
+        function loadTimeline(code) {
             const container = document.getElementById("timeline-container");
             container.innerHTML = "";
-            schedule.forEach(item => {
+            TIMETABLES[code].forEach(item => {
                 container.innerHTML += `
                     <div class="timeline-item">
                         <div class="time">${item.time} uur</div>
@@ -417,6 +408,46 @@
                     document.getElementById("seconds").innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
                 }
             }, 1000);
+        }
+
+        // Google Forms RSVP Koppeling
+        function submitRSVP() {
+            const FORM_ID = "1FAIpQLSfwe3UPSukbCHpt1nuNlmYFn3K_H_X2metu7idittqrQ2efVA";
+            const ENTRY_NAAM = "entry.52919080";
+            const ENTRY_AANWEZIG = "entry.1573650675";
+            const ENTRY_AANTAL = "entry.1967207897";
+            const ENTRY_DIEET = "entry.1451513720";
+
+            const naam = document.getElementById("rsvp-naam").value;
+            const aanwezigheid = document.getElementById("rsvp-aanwezigheid").value;
+            const aantal = document.getElementById("rsvp-aantal").value;
+            const dieet = document.getElementById("rsvp-dieet").value;
+
+            const googleFormUrl = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
+
+            const formData = new FormData();
+            formData.append(ENTRY_NAAM, naam);
+            formData.append(ENTRY_AANWEZIG, aanwezigheid);
+            formData.append(ENTRY_AANTAL, aantal);
+            formData.append(ENTRY_DIEET, dieet);
+
+            const btn = document.getElementById("rsvp-btn");
+            btn.innerText = "Verzenden...";
+            btn.disabled = true;
+
+            fetch(googleFormUrl, {
+                method: "POST",
+                mode: "no-cors",
+                body: formData
+            }).then(() => {
+                document.getElementById("rsvp-form").reset();
+                btn.style.display = "none";
+                document.getElementById("rsvp-success").style.display = "block";
+            }).catch(err => {
+                alert("Er ging iets mis bij het verzenden. Probeer opnieuw.");
+                btn.innerText = "RSVP Bevestigen";
+                btn.disabled = false;
+            });
         }
 
         document.getElementById("passcode").addEventListener("keypress", function(e) {
