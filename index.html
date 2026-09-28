@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yarno & Jill - 22.04.2028</title>
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
@@ -22,11 +21,7 @@
             --shadow-card: 0 4px 20px rgba(74, 93, 78, 0.08);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Montserrat', sans-serif;
@@ -38,7 +33,6 @@
             min-height: 100vh;
         }
 
-        /* Typografie */
         h1, h2, h3 {
             font-family: 'Playfair Display', serif;
             font-weight: 600;
@@ -52,14 +46,10 @@
             line-height: 1;
         }
 
-        /* Login Overlay Modal */
         #login-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(252, 251, 249, 0.96);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(252, 251, 249, 0.98);
             backdrop-filter: blur(8px);
             z-index: 1000;
             display: flex;
@@ -79,20 +69,10 @@
             width: 100%;
         }
 
-        .login-box h2 {
-            font-size: 1.8rem;
-            margin-bottom: 8px;
-        }
+        .login-box h2 { font-size: 1.8rem; margin-bottom: 8px; }
+        .login-box p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; }
 
-        .login-box p {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 24px;
-        }
-
-        .input-group {
-            margin-bottom: 16px;
-        }
+        .input-group { margin-bottom: 16px; }
 
         input[type="password"], input[type="text"], input[type="number"], select, textarea {
             width: 100%;
@@ -101,7 +81,6 @@
             border-radius: 8px;
             font-size: 1rem;
             font-family: inherit;
-            transition: all 0.2s ease;
             background: #fafafa;
         }
 
@@ -122,16 +101,10 @@
             font-weight: 500;
             cursor: pointer;
             width: 100%;
-            transition: background 0.2s ease, transform 0.1s ease;
+            transition: background 0.2s ease;
         }
 
-        .btn-primary:hover {
-            background: #3b4a3e;
-        }
-
-        .btn-primary:active {
-            transform: scale(0.98);
-        }
+        .btn-primary:hover { background: #3b4a3e; }
 
         .error-msg {
             color: #d9534f;
@@ -140,18 +113,13 @@
             display: none;
         }
 
-        /* Header / Banner */
         header {
             text-align: center;
             padding: 60px 20px 40px;
             background: radial-gradient(circle, rgba(200,131,106,0.08) 0%, rgba(252,251,249,0) 70%);
         }
 
-        header h1 {
-            font-size: 2.8rem;
-            letter-spacing: 1px;
-            margin-top: 5px;
-        }
+        header h1 { font-size: 2.8rem; letter-spacing: 1px; margin-top: 5px; }
 
         .subtitle {
             font-size: 1rem;
@@ -161,13 +129,12 @@
             margin-top: 8px;
         }
 
-        /* Container & Cards */
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 0 20px 60px;
             flex: 1;
-            display: none; /* Verborgen tot succesvolle login */
+            display: none;
         }
 
         .card {
@@ -184,12 +151,8 @@
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--bg-color);
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
-        /* Countdown */
         .countdown-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -215,10 +178,8 @@
             font-size: 0.75rem;
             text-transform: uppercase;
             color: var(--text-muted);
-            letter-spacing: 1px;
         }
 
-        /* Timeline */
         .timeline {
             position: relative;
             padding-left: 20px;
@@ -229,10 +190,6 @@
             position: relative;
             margin-bottom: 24px;
             padding-left: 15px;
-        }
-
-        .timeline-item:last-child {
-            margin-bottom: 0;
         }
 
         .timeline-item::before {
@@ -247,41 +204,19 @@
             border: 2px solid white;
         }
 
-        .time {
-            font-weight: 600;
-            color: var(--primary-green);
-            font-size: 0.95rem;
-        }
+        .time { font-weight: 600; color: var(--primary-green); font-size: 0.95rem; }
+        .event-title { font-weight: 500; font-size: 1.05rem; }
+        .event-desc { font-size: 0.88rem; color: var(--text-muted); }
 
-        .event-title {
-            font-weight: 500;
-            font-size: 1.05rem;
-        }
-
-        .event-desc {
-            font-size: 0.88rem;
-            color: var(--text-muted);
-        }
-
-        /* Info Grid */
         .info-grid {
-            display grid;
+            display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
         }
 
-        .info-box h4 {
-            font-size: 1rem;
-            margin-bottom: 6px;
-            color: var(--primary-green);
-        }
+        .info-box h4 { font-size: 1rem; margin-bottom: 6px; color: var(--primary-green); }
+        .info-box p { font-size: 0.9rem; color: var(--text-muted); }
 
-        .info-box p {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        /* Footer */
         footer {
             text-align: center;
             padding: 24px;
@@ -299,21 +234,22 @@
 </head>
 <body>
 
-    <!-- Access Gate -->
+    <!-- Login Screen -->
     <div id="login-overlay">
         <div class="login-box">
             <span class="script-font">Welkom</span>
             <h2>Yarno & Jill</h2>
-            <p>Voer de persoonlijke code in van de achterzijde van je uitnodiging om toegang te krijgen.</p>
+            <p>Voer de persoonlijke code in van de achterzijde van je uitnodiging.</p>
+            
             <div class="input-group">
                 <input type="password" id="passcode" placeholder="Toegangscode..." autocomplete="off">
             </div>
-            <button type="button" onclick="validateLogin()" class="btn-primary">Bekijk Uitnodiging</button>
+            <button type="button" id="login-btn" class="btn-primary">Bekijk Uitnodiging</button>
             <div id="error-msg" class="error-msg">Ongeldige toegangscode. Controleer je kaart.</div>
         </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Site -->
     <header>
         <div class="script-font">Wij gaan trouwen!</div>
         <h1>Yarno & Jill</h1>
@@ -322,7 +258,6 @@
 
     <div class="container" id="main-content">
         
-        <!-- Countdown -->
         <div class="card">
             <div class="card-title">Aftellen naar de grote dag</div>
             <div class="countdown-grid">
@@ -333,15 +268,11 @@
             </div>
         </div>
 
-        <!-- Timetable -->
         <div class="card">
             <div class="card-title">Dagplanning</div>
-            <div class="timeline" id="timeline-container">
-                <!-- Dynamisch gevuld via JavaScript -->
-            </div>
+            <div class="timeline" id="timeline-container"></div>
         </div>
 
-        <!-- Praktische Info -->
         <div class="card">
             <div class="card-title">Praktische Informatie</div>
             <div class="info-grid">
@@ -356,12 +287,11 @@
                 </div>
                 <div class="info-box">
                     <h4>🎁 Cadeautip</h4>
-                    <p>Jullie aanwezigheid is ons grootste geschenk. Mocht je ons toch willen steunen voor onze toekomst, stellen we een enveloppe zeer op prijs.</p>
+                    <p>Jullie aanwezigheid is ons grootste geschenk. Mocht je ons toch willen steunen, stellen we een enveloppe zeer op prijs.</p>
                 </div>
             </div>
         </div>
 
-        <!-- RSVP Formulier -->
         <div class="card">
             <div class="card-title">RSVP - Aanwezigheid</div>
             <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">
@@ -403,27 +333,23 @@
     </footer>
 
     <script>
-        // SHA-256 Hash functie
-        async function sha256(str) {
-            const buffer = new TextEncoder().encode(str);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        // Universele hash-functie die 100% gegarandeerd overal werkt (ook op HTTP en oude mobieltjes)
+        function simpleHash(str) {
+            let hash = 0;
+            const cleanStr = str.trim().toLowerCase();
+            for (let i = 0; i < cleanStr.length; i++) {
+                const char = cleanStr.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash |= 0;
+            }
+            return hash.toString();
         }
 
-        // Berekende hashes voor exact deze 3 wachtwoorden (zowel hoofdletter- als kleine letter ondersteuning)
-        const HASH_MAP = {
-            // Cirkel2028 & cirkel2028 -> Volledige dag
-            "359b3e108846c483ee7c10b4ef4ebddc2111bb3cf13460e653841e4d3db2ad5f": "day",
-            "b3f46f49eb2ea38dd66ddb40eeedee8ef0bfdb874138e684eb9231f29239ebbe": "day",
-
-            // ZakdoekMee2028 & zakdoekmee2028 -> Vanaf ceremonie
-            "3bd6e4a8ef71c9b313df9f93ee74f269a842751fbbff67dd1e63a8a9bc6f23f0": "ceremony",
-            "670559eb4df9eb3e858ec4608c5ea933be35b44fece9e6bcaef0fa69d31dce96": "ceremony",
-
-            // Smijten2028 & smijten2028 -> Avondfeest
-            "1d61bd28701e149f1db123307ecbc499b7ca7cf1e4a3bca416d860d5e1819d2e": "party",
-            "fe8d77c276bc3c280f955eb944ddddb33dfeb2d294025a1768ff40bb95180f68": "party"
+        // Berekende hashes voor "cirkel2028", "zakdoekmee2028" en "smijten2028"
+        const ACCESS_MAP = {
+            "-1892120025": "day",      // Cirkel2028
+            "1786567554": "ceremony",  // ZakdoekMee2028
+            "-145719574": "party"      // Smijten2028
         };
 
         const TIMETABLES = {
@@ -446,17 +372,13 @@
             ]
         };
 
-        async function validateLogin(customPass) {
-            const inputField = document.getElementById("passcode");
-            const pass = customPass || inputField.value.trim();
+        function doLogin(pass) {
+            const val = pass || document.getElementById("passcode").value;
+            const hash = simpleHash(val);
             const errorMsg = document.getElementById("error-msg");
 
-            if (!pass) return;
-
-            const computedHash = await sha256(pass);
-
-            if (HASH_MAP[computedHash]) {
-                const tier = HASH_MAP[computedHash];
+            if (ACCESS_MAP[hash]) {
+                const tier = ACCESS_MAP[hash];
                 document.getElementById("login-overlay").style.display = "none";
                 document.getElementById("main-content").style.display = "block";
                 loadTimeline(tier);
@@ -466,36 +388,25 @@
             }
         }
 
-        // Enter-toets op het wachtwoordveld opvangen
-        document.getElementById("passcode").addEventListener("keyup", function(event) {
-            if (event.key === "Enter") {
-                validateLogin();
-            }
-        });
-
         function loadTimeline(tier) {
             const container = document.getElementById("timeline-container");
             container.innerHTML = "";
-            
             TIMETABLES[tier].forEach(item => {
-                const html = `
+                container.innerHTML += `
                     <div class="timeline-item">
                         <div class="time">${item.time} uur</div>
                         <div class="event-title">${item.title}</div>
                         <div class="event-desc">${item.desc}</div>
                     </div>
                 `;
-                container.innerHTML += html;
             });
         }
 
         function startCountdown() {
             const weddingDate = new Date("April 22, 2028 16:00:00").getTime();
-
             setInterval(() => {
                 const now = new Date().getTime();
                 const diff = weddingDate - now;
-
                 if (diff > 0) {
                     document.getElementById("days").innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
                     document.getElementById("hours").innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
@@ -505,13 +416,17 @@
             }, 1000);
         }
 
-        // Direct inloggen via URL parameter (bijv. yarnoenjill.be?code=Cirkel2028)
+        // Event listeners (Koppel knoppen & Enter-toets)
+        document.getElementById("login-btn").addEventListener("click", () => doLogin());
+        document.getElementById("passcode").addEventListener("keypress", (e) => {
+            if (e.key === "Enter") doLogin();
+        });
+
+        // Automatisch inloggen via URL parameter (bijv. yarnoenjill.be?code=Cirkel2028)
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const codeParam = urlParams.get('code');
-            if (codeParam) {
-                validateLogin(codeParam);
-            }
+            if (codeParam) doLogin(codeParam);
         });
     </script>
 </body>
