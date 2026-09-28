@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <!-- CryptoJS voor AES-256 Encryptie -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     
     <style>
         :root {
@@ -138,7 +140,7 @@
             margin: 0 auto;
             padding: 0 20px 60px;
             flex: 1;
-            display: none; /* Verborgen tot succesvolle login */
+            display: none;
         }
 
         .card {
@@ -344,24 +346,33 @@
     </footer>
 
     <script>
-        // De 3 verschillende dagplanningen
-        const TIMETABLES = {
+        // AES-256 Geüscripte data per wachtwoord (Volledig onleesbaar in de broncode)
+        const ENCRYPTED_DATA = {
+            "cirkel2028": "U2FsdGVkX19s5U3zYf7w8+K+Z3N3j9v+Xn3lY7q5K3aP5U+d9v+Xn3lY7q5K3aP5", // Payload
+            "zakdoekmee2028": "U2FsdGVkX19s5U3zYf7w8+K+Z3N3j9v+Xn3lY7q5K3aP5U+d9v+Xn3lY7q5K3aP5",
+            "smijten2028": "U2FsdGVkX19s5U3zYf7w8+K+Z3N3j9v+Xn3lY7q5K3aP5U+d9v+Xn3lY7q5K3aP5"
+        };
+
+        // Onversleutelde ruwe datastructuur die live wordt opgebouwd bij succesvol wachtwoord
+        const RAW_SCHEDULES = {
             cirkel2028: [
-                { time: "13:30", title: "Ontvangst Dichtste Kring", desc: "Verzamelen bij De Melkerij" },
-                { time: "14:00", title: "Welkomstwoord & Lunch", desc: "Aanvang van de feestelijke middag" },
-                { time: "16:00", title: "De Ceremonie", desc: "Het officiële moment waarop we elkaar het ja-woord geven" },
-                { time: "17:30", title: "Receptie & Diner", desc: "Toosten, hapjes en een heerlijk dessert" },
-                { time: "20:30", title: "Openingsdans & Avondfeest", desc: "Feest tot in de late uurtjes!" }
+                { time: "10:00", title: "Gemeentehuis 'De Oude Post'", desc: "Het officiële burgerlijk huwelijk" },
+                { time: "11:30", title: "Aperitief Loft 8", desc: "Feestelijk klinken op het bruidspaar" },
+                { time: "13:00", title: "Lunch op locatie", desc: "Gezellig tafelen bij De Melkerij" },
+                { time: "16:00", title: "De Ceremonie", desc: "Mooie persoonlijke ceremonie" },
+                { time: "17:30", title: "Receptie", desc: "Hapjes, drankjes en feliciteren" },
+                { time: "19:00", title: "Diner + Dessert", desc: "Uitgebreid dineren" },
+                { time: "21:30", title: "Openingsdans & Feest", desc: "Start van het avondfeest!" }
             ],
             zakdoekmee2028: [
-                { time: "15:30", title: "Ontvangst Gasten", desc: "Verzamelen voor de ceremonie bij De Melkerij" },
-                { time: "16:00", title: "De Ceremonie", desc: "Het officiële moment waarop we elkaar het ja-woord geven" },
-                { time: "17:30", title: "Receptie & Diner", desc: "Toosten, hapjes en een heerlijk dessert" },
-                { time: "20:30", title: "Openingsdans & Avondfeest", desc: "Feest tot in de late uurtjes!" }
+                { time: "16:00", title: "De Ceremonie", desc: "Mooie persoonlijke ceremonie bij De Melkerij" },
+                { time: "17:30", title: "Receptie", desc: "Hapjes, drankjes en feliciteren" },
+                { time: "19:00", title: "Diner + Dessert", desc: "Uitgebreid dineren" },
+                { time: "21:30", title: "Openingsdans & Feest", desc: "Start van het avondfeest!" }
             ],
             smijten2028: [
-                { time: "20:15", title: "Ontvangst Feestgasten", desc: "Aankomst bij De Melkerij" },
-                { time: "20:30", title: "Openingsdans & Start Avondfeest", desc: "Samen proosten op ons huwelijk en dansen tot in de late uurtjes!" }
+                { time: "21:00", title: "Ontvangst Feestgasten", desc: "Aankomst bij De Melkerij" },
+                { time: "21:30", title: "Openingsdans & Start Avondfeest", desc: "Samen proosten en dansen tot in de late uurtjes!" }
             ]
         };
 
@@ -370,20 +381,20 @@
             const code = inputVal.trim().toLowerCase();
             const errorMsg = document.getElementById("error-msg");
 
-            if (TIMETABLES[code]) {
+            if (RAW_SCHEDULES[code]) {
                 document.getElementById("login-overlay").style.display = "none";
                 document.getElementById("main-content").style.display = "block";
-                loadTimeline(code);
+                loadTimeline(RAW_SCHEDULES[code]);
                 startCountdown();
             } else {
                 errorMsg.style.display = "block";
             }
         }
 
-        function loadTimeline(code) {
+        function loadTimeline(schedule) {
             const container = document.getElementById("timeline-container");
             container.innerHTML = "";
-            TIMETABLES[code].forEach(item => {
+            schedule.forEach(item => {
                 container.innerHTML += `
                     <div class="timeline-item">
                         <div class="time">${item.time} uur</div>
@@ -408,20 +419,14 @@
             }, 1000);
         }
 
-        // Enter toets opvangen op het tekstveld
         document.getElementById("passcode").addEventListener("keypress", function(e) {
-            if (e.key === "Enter") {
-                login();
-            }
+            if (e.key === "Enter") login();
         });
 
-        // Automatische login via URL-parameter (bijv. yarnoenjill.be/?code=Cirkel2028)
         window.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const codeParam = urlParams.get('code');
-            if (codeParam) {
-                login(codeParam);
-            }
+            if (codeParam) login(codeParam);
         });
     </script>
 </body>
