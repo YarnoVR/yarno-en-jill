@@ -309,16 +309,13 @@
                 Laat ons uiterlijk voor <strong>1 maart 2028</strong> weten of je erbij bent!
             </p>
 
-            <!-- Onzichtbare Iframe voor verwerking op de achtergrond -->
-            <iframe name="secret_iframe" id="secret_iframe" style="display:none;" onload="if(isSubmitted){ showSuccess(); }"></iframe>
-
-            <form action="https://docs.google.com/forms/d/e/1FAIpQLSfwe3UPSukbCHpt1nuNlmYFn3K_H_X2metu7idittqrQ2efVA/formResponse" method="POST" target="secret_iframe" id="rsvp-form" onsubmit="isSubmitted = true;">
+            <form id="rsvp-form" onsubmit="event.preventDefault(); submitRSVP();">
                 <div class="input-group">
-                    <input type="text" name="entry.52919080" placeholder="Jouw naam / Namen van bezoekers" required>
+                    <input type="text" id="rsvp-naam" placeholder="Jouw naam / Namen van bezoekers" required>
                 </div>
 
                 <div class="input-group">
-                    <select name="entry.1573650675" required>
+                    <select id="rsvp-aanwezigheid" required>
                         <option value="" disabled selected>Ben je aanwezig?</option>
                         <option value="Aanwezig">Aanwezig</option>
                         <option value="Afwezig">Afwezig</option>
@@ -326,11 +323,11 @@
                 </div>
 
                 <div class="input-group">
-                    <input type="text" name="entry.1967207897" placeholder="Aantal personen" value="1" required>
+                    <input type="number" id="rsvp-aantal" placeholder="Aantal personen" min="1" max="10" value="1" required>
                 </div>
 
                 <div class="input-group">
-                    <textarea name="entry.1451513720" rows="3" placeholder="Dieetwensen of allergieën (optioneel)"></textarea>
+                    <textarea id="rsvp-dieet" rows="3" placeholder="Dieetwensen of allergieën (optioneel)"></textarea>
                 </div>
 
                 <button type="submit" id="rsvp-btn" class="btn-primary">RSVP Bevestigen</button>
@@ -348,11 +345,33 @@
     </footer>
 
     <script>
-        var isSubmitted = false;
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw5IkArEcbpqhzp8YGiHn7-47LugJWWPCRhAl20T13n-_jgxh8ugZ9YSFGsmmhE6xyH/exec";
 
-        function showSuccess() {
-            document.getElementById("rsvp-form").style.display = "none";
-            document.getElementById("rsvp-success").style.display = "block";
+        function submitRSVP() {
+            const btn = document.getElementById("rsvp-btn");
+            btn.innerText = "Verzenden...";
+            btn.disabled = true;
+
+            const payload = {
+                naam: document.getElementById("rsvp-naam").value,
+                aanwezigheid: document.getElementById("rsvp-aanwezigheid").value,
+                aantal: document.getElementById("rsvp-aantal").value,
+                dieet: document.getElementById("rsvp-dieet").value
+            };
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                document.getElementById("rsvp-form").style.display = "none";
+                document.getElementById("rsvp-success").style.display = "block";
+            }).catch(err => {
+                alert("Er ging iets mis. Probeer opnieuw.");
+                btn.innerText = "RSVP Bevestigen";
+                btn.disabled = false;
+            });
         }
 
         const TIMETABLES = {
