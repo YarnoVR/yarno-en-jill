@@ -132,13 +132,19 @@
             margin-top: 8px;
         }
 
-        /* Main Container */
+        /* Main Container & Grid voor Desktop */
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 0 20px 60px;
             flex: 1;
             display: none;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
         }
 
         .card {
@@ -151,7 +157,7 @@
         }
 
         .card-title {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin-bottom: 20px;
             padding-bottom: 10px;
             border-bottom: 1px solid var(--bg-color);
@@ -214,7 +220,7 @@
         .event-title { font-weight: 500; font-size: 1.05rem; }
         .event-desc { font-size: 0.88rem; color: var(--text-muted); }
 
-        /* Practical Details */
+        /* Practical Details Grid */
         .info-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -232,10 +238,18 @@
             border-top: 1px solid var(--border-color);
         }
 
-        @media (max-width: 600px) {
-            header h1 { font-size: 2.2rem; }
-            .card { padding: 20px; }
-            .countdown-grid { grid-template-columns: repeat(2, 1fr); }
+        /* Responsieve Stijlen specifiek voor Mobiel (< 768px) */
+        @media (max-width: 768px) {
+            header { padding: 40px 15px 20px; }
+            header h1 { font-size: 2.1rem; }
+            .script-font { font-size: 2.3rem; }
+            
+            .grid-2col { grid-template-columns: 1fr; gap: 0; }
+            .card { padding: 20px 16px; border-radius: 12px; margin-bottom: 16px; }
+            
+            .countdown-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .count-node { padding: 8px; }
+            .count-node .number { font-size: 1.3rem; }
         }
     </style>
 </head>
@@ -265,7 +279,7 @@
 
     <div class="container" id="main-content">
         
-        <!-- Countdown -->
+        <!-- Countdown Card -->
         <div class="card">
             <div class="card-title">Aftellen naar de grote dag</div>
             <div class="countdown-grid">
@@ -276,33 +290,68 @@
             </div>
         </div>
 
-        <!-- Dagplanning -->
-        <div class="card">
-            <div class="card-title">Dagplanning</div>
-            <div class="timeline" id="timeline-container"></div>
-        </div>
+        <!-- 2 Kolommen Grid op PC -->
+        <div class="grid-2col">
+            <!-- Dagplanning Card -->
+            <div class="card">
+                <div class="card-title">Dagplanning</div>
+                <div class="timeline" id="timeline-container"></div>
+            </div>
 
-        <!-- Praktische Info -->
-        <div class="card">
-            <div class="card-title">Praktische Informatie</div>
-            <div class="info-grid">
-                <div class="info-box">
-                    <h4>📍 Locatie</h4>
-                    <p><strong>De Melkerij</strong><br>Kerkstraat 1, Bavegem<br>
-                    <a href="https://maps.google.com/?q=De+Melkerij+Bavegem" target="_blank" style="color: var(--accent-terracotta); font-weight: 500;">Open op Google Maps &rarr;</a></p>
-                </div>
-                <div class="info-box">
-                    <h4>👗 Dresscode</h4>
-                    <p><strong>Casual Chic / Festive</strong><br>Kom zoals je bent, maar met een feestelijke touch!</p>
-                </div>
-                <div class="info-box">
-                    <h4>🎁 Cadeautip</h4>
-                    <p>Jullie aanwezigheid is ons grootste geschenk. Mocht je ons toch willen steunen, stellen we een enveloppe zeer op prijs.</p>
+            <!-- Praktische Info Card -->
+            <div class="card">
+                <div class="card-title">Praktische Informatie</div>
+                <div class="info-grid">
+                    <div class="info-box">
+                        <h4>📍 Locatie</h4>
+                        <p><strong>De Melkerij</strong><br>Kerkstraat 1, Bavegem<br>
+                        <a href="https://maps.google.com/?q=De+Melkerij+Bavegem" target="_blank" style="color: var(--accent-terracotta); font-weight: 500;">Open op Google Maps &rarr;</a></p>
+                    </div>
+                    <div class="info-box">
+                        <h4>🚗 Parkeren & Bereikbaarheid</h4>
+                        <p>Er is een ruime private parking voorzien aan de zaal van De Melkerij. Volg bij aankomst de parkeerwijzers.</p>
+                    </div>
+                    <div class="info-box">
+                        <h4>👗 Dresscode</h4>
+                        <p><strong>Casual Chic / Festive</strong><br>Kom zoals je bent, maar met een feestelijke touch!</p>
+                    </div>
+                    <div class="info-box">
+                        <h4>🎁 Cadeautip</h4>
+                        <p>Jullie aanwezigheid is ons grootste geschenk. Mocht je ons toch willen steunen, stellen we een enveloppe zeer op prijs.</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- RSVP Formulier -->
+        <!-- Overnachting & Ceremoniemeester Grid op PC -->
+        <div class="grid-2col">
+            <!-- Overnachting Card -->
+            <div class="card">
+                <div class="card-title">😴 Overnachten in de buurt</div>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px;">
+                    Blijf je graag overnachten na het feest? Hier zijn een paar aanraders vlakbij de locatie:
+                </p>
+                <div class="info-box" style="margin-bottom: 10px;">
+                    <p><strong>B&B De Melkerij</strong> (Aan de zaal zelf)</p>
+                    <p><strong>B&B Het Neerhof</strong> (Bavegem / Oosterzele)</p>
+                    <p><strong>Hotel / B&B Sint-Lievens-Houtem</strong> (5 min. rijden)</p>
+                </div>
+            </div>
+
+            <!-- Ceremoniemeesters Card -->
+            <div class="card">
+                <div class="card-title">💬 Ceremoniemeesters</div>
+                <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px;">
+                    Heb je vragen, wil je een verrassing of speech plannen? Neem gerust contact op met onze ceremoniemeesters:
+                </p>
+                <div class="info-box">
+                    <p><strong>Naam Ceremoniemeester:</strong> Contactpersoon</p>
+                    <p><strong>E-mail / GSM:</strong> ceremoniemeester@email.com</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- RSVP Formulier Card -->
         <div class="card">
             <div class="card-title">RSVP - Aanwezigheid</div>
             <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">
@@ -316,9 +365,9 @@
 
                 <div class="input-group">
                     <select id="rsvp-aanwezigheid" required>
-                        <option value="" disabled selected>Ben je aanwezig?</option>
-                        <option value="Aanwezig">Aanwezig</option>
-                        <option value="Afwezig">Afwezig</option>
+                        <option value="" disabled selected>Ben je erbij op onze grote dag?</option>
+                        <option value="Ja, we komen heel graag mee vieren!">Ja, we komen heel graag mee vieren!</option>
+                        <option value="Helaas, we moeten met spijt in het hart passen.">Helaas, we moeten met spijt in het hart passen.</option>
                     </select>
                 </div>
 
@@ -327,7 +376,7 @@
                 </div>
 
                 <div class="input-group">
-                    <textarea id="rsvp-dieet" rows="3" placeholder="Dieetwensen of allergieën (optioneel)"></textarea>
+                    <textarea id="rsvp-dieet" rows="3" placeholder="Dieetwensen, allergieën of verzoeknummers voor de DJ! (optioneel)"></textarea>
                 </div>
 
                 <button type="submit" id="rsvp-btn" class="btn-primary">RSVP Bevestigen</button>
@@ -379,7 +428,7 @@
                 { time: "10:00", title: "Gemeentehuis 'De Oude Post'", desc: "Het officiële burgerlijk huwelijk" },
                 { time: "11:30", title: "Aperitief Loft 8", desc: "Feestelijk klinken op het bruidspaar" },
                 { time: "13:00", title: "Lunch op locatie", desc: "Gezellig tafelen bij De Melkerij" },
-                { time: "16:00", title: "De Ceremonie", desc: "Mooie persoonlijke ceremonie" },
+                { time: "16:00", title: "De Ceremonie", desc: "Mooie persönliche ceremonie" },
                 { time: "17:30", title: "Receptie", desc: "Hapjes, drankjes en feliciteren" },
                 { time: "19:00", title: "Diner + Dessert", desc: "Uitgebreid dineren" },
                 { time: "21:30", title: "Openingsdans & Feest", desc: "Start van het avondfeest!" }
