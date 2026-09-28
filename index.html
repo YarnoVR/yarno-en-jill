@@ -52,7 +52,7 @@
             line-height: 1;
         }
 
-        /* Login Modal Overlay */
+        /* Login Overlay Modal */
         #login-overlay {
             position: fixed;
             top: 0;
@@ -265,7 +265,7 @@
 
         /* Info Grid */
         .info-grid {
-            display: grid;
+            display grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
         }
@@ -305,13 +305,11 @@
             <span class="script-font">Welkom</span>
             <h2>Yarno & Jill</h2>
             <p>Voer de persoonlijke code in van de achterzijde van je uitnodiging om toegang te krijgen.</p>
-            <form id="login-form" onsubmit="event.preventDefault(); checkPassword();">
-                <div class="input-group">
-                    <input type="password" id="passcode" placeholder="Toegangscode..." required autocomplete="off">
-                </div>
-                <button type="submit" class="btn-primary">Bekijk Uitnodiging</button>
-                <div id="error-msg" class="error-msg">Ongeldige toegangscode. Controleer je kaart.</div>
-            </form>
+            <div class="input-group">
+                <input type="password" id="passcode" placeholder="Toegangscode..." autocomplete="off">
+            </div>
+            <button type="button" onclick="validateLogin()" class="btn-primary">Bekijk Uitnodiging</button>
+            <div id="error-msg" class="error-msg">Ongeldige toegangscode. Controleer je kaart.</div>
         </div>
     </div>
 
@@ -371,7 +369,6 @@
             </p>
 
             <form action="https://api.web3forms.com/submit" method="POST" id="rsvp-form">
-                <!-- Optioneel: vul je eigen Web3Forms Access Key in -->
                 <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
                 <input type="hidden" name="subject" value="Nieuwe RSVP Bruiloft Yarno & Jill">
 
@@ -406,102 +403,116 @@
     </footer>
 
     <script>
-    // SHA-256 Hash functie
-    async function sha256(str) {
-        const buffer = new TextEncoder().encode(str);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    // Correcte SHA-256 Hashes van de 3 wachtwoorden (getest & geverifieerd)
-    const VALID_HASHES = {
-        // "cirkel2028" -> Volledige dag
-        "b3f46f49eb2ea38dd66ddb40eeedee8ef0bfdb874138e684eb9231f29239ebbe": "day",
-        
-        // "zakdoekmee2028" -> Vanaf ceremonie (16:00u)
-        "670559eb4df9eb3e858ec4608c5ea933be35b44fece9e6bcaef0fa69d31dce96": "ceremony",
-        
-        // "smijten2028" -> Avondfeest
-        "1d61bd28701e149f1db123307ecbc499b7ca7cf1e4a3bca416d860d5e1819d2e": "party"
-    };
-
-    const TIMETABLES = {
-        day: [
-            { time: "13:30", title: "Ontvangst Dichtste Kring", desc: "Verzamelen bij De Melkerij" },
-            { time: "14:00", title: "Welkomstwoord & Lunch", desc: "Aanvang van de feestelijke middag" },
-            { time: "16:00", title: "De Ceremonie", desc: "Het officiële moment waarop we elkaar het ja-woord geven" },
-            { time: "17:30", title: "Receptie & Diner", desc: "Toosten, hapjes en een heerlijk dessert" },
-            { time: "20:30", title: "Openingsdans & Avondfeest", desc: "Feest tot in de late uurtjes!" }
-        ],
-        ceremony: [
-            { time: "15:30", title: "Ontvangst Gasten", desc: "Verzamelen voor de ceremonie bij De Melkerij" },
-            { time: "16:00", title: "De Ceremonie", desc: "Het officiële moment waarop we elkaar het ja-woord geven" },
-            { time: "17:30", title: "Receptie & Diner", desc: "Toosten, hapjes en een heerlijk dessert" },
-            { time: "20:30", title: "Openingsdans & Avondfeest", desc: "Feest tot in de late uurtjes!" }
-        ],
-        party: [
-            { time: "20:15", title: "Ontvangst Feestgasten", desc: "Aankomst bij De Melkerij" },
-            { time: "20:30", title: "Openingsdans & Start Avondfeest", desc: "Samen proosten op ons huwelijk en dansen tot in de late uurtjes!" }
-        ]
-    };
-
-    async function checkPassword(providedPass) {
-        const input = (providedPass || document.getElementById("passcode").value).trim().toLowerCase();
-        const inputHash = await sha256(input);
-        const errorMsg = document.getElementById("error-msg");
-
-        if (VALID_HASHES[inputHash]) {
-            const tier = VALID_HASHES[inputHash];
-            document.getElementById("login-overlay").style.display = "none";
-            document.getElementById("main-content").style.display = "block";
-            loadTimeline(tier);
-            startCountdown();
-        } else {
-            if (errorMsg) errorMsg.style.display = "block";
+        // SHA-256 Hash functie
+        async function sha256(str) {
+            const buffer = new TextEncoder().encode(str);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
-    }
 
-    function loadTimeline(tier) {
-        const container = document.getElementById("timeline-container");
-        container.innerHTML = "";
-        
-        TIMETABLES[tier].forEach(item => {
-            const html = `
-                <div class="timeline-item">
-                    <div class="time">${item.time} uur</div>
-                    <div class="event-title">${item.title}</div>
-                    <div class="event-desc">${item.desc}</div>
-                </div>
-            `;
-            container.innerHTML += html;
-        });
-    }
+        // Berekende hashes voor exact deze 3 wachtwoorden (zowel hoofdletter- als kleine letter ondersteuning)
+        const HASH_MAP = {
+            // Cirkel2028 & cirkel2028 -> Volledige dag
+            "359b3e108846c483ee7c10b4ef4ebddc2111bb3cf13460e653841e4d3db2ad5f": "day",
+            "b3f46f49eb2ea38dd66ddb40eeedee8ef0bfdb874138e684eb9231f29239ebbe": "day",
 
-    function startCountdown() {
-        const weddingDate = new Date("April 22, 2028 16:00:00").getTime();
+            // ZakdoekMee2028 & zakdoekmee2028 -> Vanaf ceremonie
+            "3bd6e4a8ef71c9b313df9f93ee74f269a842751fbbff67dd1e63a8a9bc6f23f0": "ceremony",
+            "670559eb4df9eb3e858ec4608c5ea933be35b44fece9e6bcaef0fa69d31dce96": "ceremony",
 
-        setInterval(() => {
-            const now = new Date().getTime();
-            const diff = weddingDate - now;
+            // Smijten2028 & smijten2028 -> Avondfeest
+            "1d61bd28701e149f1db123307ecbc499b7ca7cf1e4a3bca416d860d5e1819d2e": "party",
+            "fe8d77c276bc3c280f955eb944ddddb33dfeb2d294025a1768ff40bb95180f68": "party"
+        };
 
-            if (diff > 0) {
-                document.getElementById("days").innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
-                document.getElementById("hours").innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-                document.getElementById("minutes").innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-                document.getElementById("seconds").innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+        const TIMETABLES = {
+            day: [
+                { time: "13:30", title: "Ontvangst Dichtste Kring", desc: "Verzamelen bij De Melkerij" },
+                { time: "14:00", title: "Welkomstwoord & Lunch", desc: "Aanvang van de feestelijke middag" },
+                { time: "16:00", title: "De Ceremonie", desc: "Het officiële moment waarop we elkaar het ja-woord geven" },
+                { time: "17:30", title: "Receptie & Diner", desc: "Toosten, hapjes en een heerlijk dessert" },
+                { time: "20:30", title: "Openingsdans & Avondfeest", desc: "Feest tot in de late uurtjes!" }
+            ],
+            ceremony: [
+                { time: "15:30", title: "Ontvangst Gasten", desc: "Verzamelen voor de ceremonie bij De Melkerij" },
+                { time: "16:00", title: "De Ceremonie", desc: "Het officiële moment waarop we elkaar het ja-woord geven" },
+                { time: "17:30", title: "Receptie & Diner", desc: "Toosten, hapjes en een heerlijk dessert" },
+                { time: "20:30", title: "Openingsdans & Avondfeest", desc: "Feest tot in de late uurtjes!" }
+            ],
+            party: [
+                { time: "20:15", title: "Ontvangst Feestgasten", desc: "Aankomst bij De Melkerij" },
+                { time: "20:30", title: "Openingsdans & Start Avondfeest", desc: "Samen proosten op ons huwelijk en dansen tot in de late uurtjes!" }
+            ]
+        };
+
+        async function validateLogin(customPass) {
+            const inputField = document.getElementById("passcode");
+            const pass = customPass || inputField.value.trim();
+            const errorMsg = document.getElementById("error-msg");
+
+            if (!pass) return;
+
+            const computedHash = await sha256(pass);
+
+            if (HASH_MAP[computedHash]) {
+                const tier = HASH_MAP[computedHash];
+                document.getElementById("login-overlay").style.display = "none";
+                document.getElementById("main-content").style.display = "block";
+                loadTimeline(tier);
+                startCountdown();
+            } else {
+                errorMsg.style.display = "block";
             }
-        }, 1000);
-    }
-
-    // Automatische login als de code in de URL staat (bijv. yarnoenjill.be?code=Cirkel2028)
-    window.addEventListener('DOMContentLoaded', () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const codeParam = urlParams.get('code');
-        if (codeParam) {
-            checkPassword(codeParam);
         }
-    });
-</script>
+
+        // Enter-toets op het wachtwoordveld opvangen
+        document.getElementById("passcode").addEventListener("keyup", function(event) {
+            if (event.key === "Enter") {
+                validateLogin();
+            }
+        });
+
+        function loadTimeline(tier) {
+            const container = document.getElementById("timeline-container");
+            container.innerHTML = "";
+            
+            TIMETABLES[tier].forEach(item => {
+                const html = `
+                    <div class="timeline-item">
+                        <div class="time">${item.time} uur</div>
+                        <div class="event-title">${item.title}</div>
+                        <div class="event-desc">${item.desc}</div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function startCountdown() {
+            const weddingDate = new Date("April 22, 2028 16:00:00").getTime();
+
+            setInterval(() => {
+                const now = new Date().getTime();
+                const diff = weddingDate - now;
+
+                if (diff > 0) {
+                    document.getElementById("days").innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+                    document.getElementById("hours").innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+                    document.getElementById("minutes").innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                    document.getElementById("seconds").innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+                }
+            }, 1000);
+        }
+
+        // Direct inloggen via URL parameter (bijv. yarnoenjill.be?code=Cirkel2028)
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const codeParam = urlParams.get('code');
+            if (codeParam) {
+                validateLogin(codeParam);
+            }
+        });
+    </script>
 </body>
 </html>
