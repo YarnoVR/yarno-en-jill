@@ -309,13 +309,16 @@
                 Laat ons uiterlijk voor <strong>1 maart 2028</strong> weten of je erbij bent!
             </p>
 
-            <form id="rsvp-form" onsubmit="event.preventDefault(); submitRSVP();">
+            <!-- Verborgen iframe om de Google Form submission in op te vangen -->
+            <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) { showRSVPSuccess(); }"></iframe>
+
+            <form action="https://docs.google.com/forms/d/e/1FAIpQLSfwe3UPSukbCHpt1nuNlmYFn3K_H_X2metu7idittqrQ2efVA/formResponse" method="POST" target="hidden_iframe" id="rsvp-form" onsubmit="submitted=true;">
                 <div class="input-group">
-                    <input type="text" id="rsvp-naam" placeholder="Jouw naam / Namen van bezoekers" required>
+                    <input type="text" name="entry.52919080" placeholder="Jouw naam / Namen van bezoekers" required>
                 </div>
 
                 <div class="input-group">
-                    <select id="rsvp-aanwezigheid" required>
+                    <select name="entry.1573650675" required>
                         <option value="" disabled selected>Ben je aanwezig?</option>
                         <option value="Aanwezig">Ja, ik/wij zijn er heel graag bij!</option>
                         <option value="Afwezig">Helaas kan/kunnen wij niet komen.</option>
@@ -323,18 +326,19 @@
                 </div>
 
                 <div class="input-group">
-                    <input type="number" id="rsvp-aantal" placeholder="Aantal personen" min="1" max="5" value="1" required>
+                    <input type="number" name="entry.1967207897" placeholder="Aantal personen" min="1" max="5" value="1" required>
                 </div>
 
                 <div class="input-group">
-                    <textarea id="rsvp-dieet" rows="3" placeholder="Dieetwensen of allergieën (optioneel)"></textarea>
+                    <textarea name="entry.1451513720" rows="3" placeholder="Dieetwensen of allergieën (optioneel)"></textarea>
                 </div>
 
                 <button type="submit" id="rsvp-btn" class="btn-primary">RSVP Bevestigen</button>
-                <div id="rsvp-success" style="display:none; color: var(--primary-green); font-weight: 600; margin-top: 15px; text-align: center;">
-                    ✓ Bedankt! Je reactie is goed ontvangen.
-                </div>
             </form>
+
+            <div id="rsvp-success" style="display:none; color: var(--primary-green); font-weight: 600; margin-top: 15px; text-align: center;">
+                ✓ Bedankt! Je reactie is goed ontvangen.
+            </div>
         </div>
 
     </div>
@@ -344,6 +348,13 @@
     </footer>
 
     <script>
+        var submitted = false;
+
+        function showRSVPSuccess() {
+            document.getElementById("rsvp-form").style.display = "none";
+            document.getElementById("rsvp-success").style.display = "block";
+        }
+
         // De 3 verschillende dagplanningen
         const TIMETABLES = {
             cirkel2028: [
@@ -408,46 +419,6 @@
                     document.getElementById("seconds").innerText = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
                 }
             }, 1000);
-        }
-
-        // Google Forms RSVP Koppeling
-        function submitRSVP() {
-            const FORM_ID = "1FAIpQLSfwe3UPSukbCHpt1nuNlmYFn3K_H_X2metu7idittqrQ2efVA";
-            const ENTRY_NAAM = "entry.52919080";
-            const ENTRY_AANWEZIG = "entry.1573650675";
-            const ENTRY_AANTAL = "entry.1967207897";
-            const ENTRY_DIEET = "entry.1451513720";
-
-            const naam = document.getElementById("rsvp-naam").value;
-            const aanwezigheid = document.getElementById("rsvp-aanwezigheid").value;
-            const aantal = document.getElementById("rsvp-aantal").value;
-            const dieet = document.getElementById("rsvp-dieet").value;
-
-            const googleFormUrl = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
-
-            const formData = new FormData();
-            formData.append(ENTRY_NAAM, naam);
-            formData.append(ENTRY_AANWEZIG, aanwezigheid);
-            formData.append(ENTRY_AANTAL, aantal);
-            formData.append(ENTRY_DIEET, dieet);
-
-            const btn = document.getElementById("rsvp-btn");
-            btn.innerText = "Verzenden...";
-            btn.disabled = true;
-
-            fetch(googleFormUrl, {
-                method: "POST",
-                mode: "no-cors",
-                body: formData
-            }).then(() => {
-                document.getElementById("rsvp-form").reset();
-                btn.style.display = "none";
-                document.getElementById("rsvp-success").style.display = "block";
-            }).catch(err => {
-                alert("Er ging iets mis bij het verzenden. Probeer opnieuw.");
-                btn.innerText = "RSVP Bevestigen";
-                btn.disabled = false;
-            });
         }
 
         document.getElementById("passcode").addEventListener("keypress", function(e) {
